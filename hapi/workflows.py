@@ -25,10 +25,10 @@ class WorkflowsClient(BaseClient):
                 (len(workflows), options))
         return workflows
 
-    def enroll_contact(self, workflow_id, contact_email):
+    def enroll_contact(self, workflow_id, contact_email, **options):
         enroll_subpath = "%s/enrollments/contacts/%s" % ( workflow_id, contact_email)
         return self._call(enroll_subpath, method='POST', **options)
 
-    def unenroll_contact(self, workflow_id, contact_email):
+    def unenroll_contact(self, workflow_id, contact_email, **options):
         enroll_subpath = "%s/enrollments/contacts/%s" % ( workflow_id, contact_email)
         return self._call(enroll_subpath, method='DELETE', **options)
