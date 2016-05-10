@@ -4,6 +4,7 @@ from base import BaseClient
 import logging_helper
 
 WORKFLOWS_API_VERSION = '3'
+ENROLLMENT_API_VERSION = '2'
 
 class WorkflowsClient(BaseClient):
     """
@@ -14,9 +15,11 @@ class WorkflowsClient(BaseClient):
         super(WorkflowsClient, self).__init__(*args, **kwargs)
         self.log = logging_helper.get_log('hapi.workflows')
 
-    def _get_path(self, subpath, version=WORKFLOWS_API_VERSION):
-        print self.options
-        return 'automation/v%s/workflows/%s' % (self.options.get('version') or version, subpath)
+    def _get_path(self, subpath):
+        version = WORKFLOWS_API_VERSION
+        if subpath.find('enrollments') != -1:
+            version = ENROLLMENT_API_VERSION
+        return '/automation/v%s/workflows/%s' % (version, subpath)
   
     def get_workflow(self, id, **options):
         return self._call(id, **options)
@@ -28,13 +31,9 @@ class WorkflowsClient(BaseClient):
         return workflows
 
     def enroll_contact(self, workflow_id, contact_email, **options):
-        params = {}
-        self._prepare_request_auth('', params, None, None)
-        enroll_path = '/' + self._get_path("%s/enrollments/contacts/%s?%s" % (workflow_id, contact_email, urllib.urlencode(params)), version=2)
-        return self._call('', url=enroll_path, method='POST', **options)
+        subpath = "%s/enrollments/contacts/%s" % (workflow_id, contact_email)
+        return self._call(subpath, method='POST', **options)
 
     def unenroll_contact(self, workflow_id, contact_email, **options):
-        params = {}
-        self._prepare_request_auth('', params, None, None)
-        unenroll_path = '/' + self._get_path("%s/enrollments/contacts/%s?%s" % (workflow_id, contact_email, urllib.urlencode(params)), version=2)
-        return self._call('', url=enroll_path, method='DELETE', **options)
+        subpath = "%s/enrollments/contacts/%s" % (workflow_id, contact_email)
+        return self._call(subpath, method='DELETE', **options)
