@@ -178,7 +178,7 @@ class BaseClient(object):
                         token_response = utils.refresh_access_token(self.refresh_token, self.client_id)
                         decoded = json.loads(token_response)
                         self.access_token = decoded['access_token']
-                        self.log.info('Retrying with new token %' % (self.access_token))
+                        self.log.info('Retrying with new token %s' % (self.access_token))
                     except Exception, e:
                         self.log.error("Unable to refresh access_token: %s" % (e))
                         raise
